@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: sockshop-tls
+  namespace: sock-shop
+spec:
+  secretName: sockshop-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: tophe.me
+  dnsNames:
+  - tophe.me
+  - www.tophe.me
