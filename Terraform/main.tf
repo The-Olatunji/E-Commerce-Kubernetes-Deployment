@@ -21,7 +21,7 @@ locals {
 }
 
 module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
+  source  = "git::https://github.com/terraform-aws-modules/terraform-aws-vpc?ref=v5.8.1"
   version = "5.8.1"
 
   name = var.vpc_name
@@ -29,8 +29,8 @@ module "vpc" {
   cidr = var.vpc_cidr
   azs  = slice(data.aws_availability_zones.available.names, 0, 3)
 
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets  = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  private_subnets = [var.private_subnet_1_cidr, var.private_subnet_2_cidr, var.private_subnet_3_cidr]
+  public_subnets  = [var.public_subnet_1_cidr, var.public_subnet_2_cidr, var.public_subnet_3_cidr]
 
   enable_nat_gateway   = true
   single_nat_gateway   = true
@@ -46,7 +46,7 @@ module "vpc" {
 }
 
 module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
+  source  = "git::https://github.com/terraform-aws-modules/terraform-aws-eks?ref=v20.8.5"
   version = "20.8.5"
 
   cluster_name    = local.cluster_name
@@ -73,7 +73,7 @@ module "eks" {
     one = {
       name = "node-group-1"
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3.medium"]
 
       min_size     = 1
       max_size     = 3
@@ -83,11 +83,11 @@ module "eks" {
     two = {
       name = "node-group-2"
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3.medium"]
 
       min_size     = 1
       max_size     = 2
-      desired_size = 2
+      desired_size = 1
     }
   }
 }
@@ -99,7 +99,7 @@ data "aws_iam_policy" "ebs_csi_policy" {
 }
 
 module "irsa-ebs-csi" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  source  = "git::https://github.com/terraform-aws-modules/terraform-aws-iam?ref=v5.39.0"
   version = "5.39.0"
 
   create_role                   = true
