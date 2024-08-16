@@ -21,8 +21,8 @@ locals {
 }
 
 module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.8.1"
+  source  = "git::https://github.com/terraform-aws-modules/terraform-aws-vpc?ref=v5.8.1"
+  # version = "5.8.1"
 
   name = var.vpc_name
 
@@ -46,8 +46,8 @@ module "vpc" {
 }
 
 module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "20.8.5"
+  source  = "git::https://github.com/terraform-aws-modules/terraform-aws-eks?ref=v20.8.5"
+  # version = "20.8.5"
 
   cluster_name    = local.cluster_name
   cluster_version = var.cluster_version
@@ -87,7 +87,7 @@ module "eks" {
 
       min_size     = 1
       max_size     = 2
-      desired_size = 2
+      desired_size = 1
     }
   }
 }
@@ -99,8 +99,8 @@ data "aws_iam_policy" "ebs_csi_policy" {
 }
 
 module "irsa-ebs-csi" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = "5.39.0"
+  source  = "git::https://github.com/terraform-aws-modules/terraform-aws-iam?ref=v5.39.0"
+  # version = "5.39.0"
 
   create_role                   = true
   role_name                     = "AmazonEKSTFEBSCSIRole-${module.eks.cluster_name}"
