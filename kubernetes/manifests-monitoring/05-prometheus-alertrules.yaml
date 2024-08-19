@@ -19,3 +19,45 @@ data:
         annotations:
           summary: "High HTTP 500 error rates"
           description: "Rate of HTTP 500 errors per 5 minutes: {{ $value }}"
+          
+    - name: HighCpuUsage
+      rules:
+      - alert: HighCpuUsageDetected
+        expr: sum(rate(container_cpu_usage_seconds_total[1m])) by (pod) > 0.8
+        for: 5m
+        labels:
+          severity: slack
+        annotations:
+          summary: "High CPU usage detected in Pod"
+          description: "Pod {{ $labels.pod }} is using more than 80% of its allocated CPU."
+          
+    - name: HighMemoryUsage
+      rules:
+      - alert: HighMemoryUsageDetected
+        expr: sum(container_memory_usage_bytes) by (pod) > 0.1 * sum(container_spec_memory_limit_bytes) by (pod)
+        labels:
+          severity: slack
+        annotations:
+          summary: "High Memory usage detected in Pod"
+          description: "Pod {{ $labels.pod }} is using more than 10% of its allocated memory."
+          
+    - name: LowMemoryUsage
+      rules:
+      - alert: LowMemoryUsageDetected
+        expr: sum(container_memory_usage_bytes) by (pod) < 0.6 * sum(container_spec_memory_limit_bytes) by (pod)
+        labels:
+          severity: slack
+        annotations:
+          summary: "Low Memory usage detected in Pod"
+          description: "Pod {{ $labels.pod }} is using less than 60% of its allocated memory."
+  
+    - name: TestAlert
+      rules:
+      - alert: TestAlert
+        expr: vector(1)
+        for: 1m
+        labels:
+          severity: slack
+        annotations:
+          summary: "Test Alert"
+          description: "This is a test alert."

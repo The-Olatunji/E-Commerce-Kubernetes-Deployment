@@ -65,7 +65,7 @@ module "eks" {
   subnet_ids = module.vpc.private_subnets
 
   eks_managed_node_group_defaults = {
-    ami_type = "AL2_x86_64"
+    ami_type = var.ami_type
 
   }
 
@@ -73,7 +73,7 @@ module "eks" {
     one = {
       name = "node-group-1"
 
-      instance_types = ["t3.medium"]
+      instance_types = var.instance_types[0]
 
       min_size     = 1
       max_size     = 3
@@ -83,11 +83,11 @@ module "eks" {
     two = {
       name = "node-group-2"
 
-      instance_types = ["t3.medium"]
+      instance_types = var.instance_types[0]
 
       min_size     = 1
       max_size     = 2
-      desired_size = 2
+      desired_size = 1
     }
   }
 }
@@ -126,8 +126,9 @@ provider "kubernetes" {
 
 
 // access managed cluster with kubectl
-# resource "null_resource" "update_kubeconfig" {
-#   provisioner "local-exec" {
-#     command = "aws eks --region ${data.terraform_remote_state.eks.outputs.region} update-kubeconfig --name ${data.terraform_remote_state.eks.outputs.cluster_name}"
-#   }
-# }
+resource "null_resource" "update_kubeconfig" {
+  provisioner "local-exec" {
+   # command = "aws eks --region ${data.terraform_remote_state.eks.outputs.region} update-kubeconfig --name ${data.terraform_remote_state.eks.outputs.cluster_name}"
+  command = "aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)"
+  }
+}

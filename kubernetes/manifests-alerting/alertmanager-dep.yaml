@@ -9,32 +9,41 @@ spec:
       app: alertmanager
   template:
     metadata:
-      name: alertmanager
       labels:
         app: alertmanager
     spec:
+      initContainers:
+      - name: init-alertmanager
+        image: busybox
+        command: ['sh', '-c', 'cp /etc/alertmanager/* /alertmanager/ && sed -i s,API_URL_SECRET,"$SLACK_HOOK_URL",g /alertmanager/config.yml']
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/alertmanager
+        - name: config-dir
+          mountPath: /alertmanager
+        env:
+        - name: SLACK_HOOK_URL
+          valueFrom:
+            secretKeyRef:
+              name: slack-hook-url
+              key: slack-hook-url
+
       containers:
       - name: alertmanager
         image: prom/alertmanager:latest
-        env:
-          - name: SLACK_HOOK_URL
-            valueFrom:
-              secretKeyRef:
-                name: slack-hook-url
-                key: slack-hook-url
-        command: ['/bin/sh', '/etc/alertmanager/configure_secret.sh']
+        command: ['/bin/alertmanager']
         args:
-          - '-config.file=/etc/alertmanager/config.yml'
-          - '-storage.path=/alertmanager'
+          - '--config.file=/alertmanager/config.yml'
+          - '--storage.path=/alertmanager'
         ports:
         - name: alertmanager
           containerPort: 9093
         volumeMounts:
-        - name: config-volume
-          mountPath: /etc/alertmanager
+        - name: config-dir
+          mountPath: /alertmanager
       volumes:
       - name: config-volume
         configMap:
           name: alertmanager
-      nodeSelector:
-        beta.kubernetes.io/os: linux
+      - name: config-dir
+        emptyDir: {}
