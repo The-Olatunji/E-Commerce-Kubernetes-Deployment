@@ -16,9 +16,9 @@ jobs:
 
       - name: Configure kubectl
         uses: azure/k8s-set-context@v3
-        # with:
-          # version: 'latest'
-          # kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
   terraform:
     name: 'Terraform Actions'
     runs-on: ubuntu-latest
