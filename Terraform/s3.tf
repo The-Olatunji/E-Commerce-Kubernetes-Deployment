@@ -1,12 +1,12 @@
 
 # Create the S3 bucket for storing Terraform state
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = var.bucket_name 
-  # lifecycle {
-  #   prevent_destroy = true
-  # }
+  bucket = tophe-terraform-statefile
+  lifecycle {
+    prevent_destroy = true
+  }
   versioning {
-    enabled = true
+    enabled = false
   }
 
   server_side_encryption_configuration {

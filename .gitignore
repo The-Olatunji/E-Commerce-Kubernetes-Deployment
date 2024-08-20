@@ -21,10 +21,12 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
-
+.gitignore
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
 main2.tf
 resource.txt
 .gitignore
+dynamodb.tf
+dynamodb.tf

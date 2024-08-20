@@ -362,5 +362,51 @@ Here are alerts sent to Slack
 The Horizontal Pod Autoscaler automatically scales the number of pod replicas in a deployment, replica set, or stateful set based on observed CPU utilization
 To deploy the Horizontal Pod Autoscaler, 
 go to the 'autoscaling' directory
-run `kubectl apply -f .`
+    
+    
+Run `kubectl apply -f .`
+
 ![HPA deployment](./images/image.png)
+
+
+## CI/CD With Github Actions
+This repository also contains a CI/CD pipeline powered by GitHub Actions. The pipeline is designed to automate the provisioning and management of AWS infrastructure, as well as the deployment and management of Kubernetes resources using Amazon EKS .
+
+The CI/CD pipeline is defined in the ci-cd-pipeline.yml file under the .github/workflows directory. The workflow includes the following steps:
+
+Checkout Code: Retrieves the latest code from the repository.
+1. Install Kubectl
+1. Set Up AWS Credentials: Configures AWS credentials using GitHub Secrets.
+1. Install Terraform: Installs the specified version of Terraform.
+1. Terraform Init: Initializes Terraform and sets up the backend configuration.
+1. Terraform Plan: Generates an execution plan for the Terraform configuration.
+1. Terraform Apply: Applies the Terraform plan to create or update infrastructure.
+1. Configure kubectl: Sets up kubectl to interact with the EKS cluster using the provided Kubeconfig.
+1. Deploy Microservice Application: Deploys the kubernetes component that makes up the whole Microservice application
+
+### Environment Variables
+The following environment variables are required:
+AWS_REGION: AWS region
+AWS_ACCESS_KEY_ID: AWS Access Key ID.
+AWS_SECRET_ACCESS_KEY: AWS Secret Access Key.
+KUBE_CONFIG_DATA: Base64-encoded Kubeconfig data for accessing the EKS cluster.
+
+
+### AWS Credentials Setup
+To set up AWS credentials, store your AWS Access Key and Secret Key as GitHub Secrets:
+
+Navigate to your GitHub repository.
+Go to Settings > Secrets > New repository secret.
+Add the following secrets:
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+
+### Kubernetes Configuration
+The KUBE_CONFIG_DATA secret is required for configuring kubectl in the pipeline. Follow these steps to generate and store the Kubeconfig:
+
+
+## Running the Pipeline
+Once the pipeline is configured, it will automatically trigger on pushes to the master branch. 
+
+## License
+This project is licensed under the MIT License. 
