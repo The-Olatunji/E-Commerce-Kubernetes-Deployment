@@ -6,8 +6,21 @@ on:
       - master
 
 jobs:
+  kubectl:
+    name: 'Kubectl Actions'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          version: 'latest'
+          # kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
   terraform:
-    name: 'Terraform Apply'
+    name: 'Terraform Actions'
     runs-on: ubuntu-latest
 
     steps:
