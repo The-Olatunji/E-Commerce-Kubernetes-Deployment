@@ -83,7 +83,7 @@ variable "instance_types" {
 }
 
 variable "db_table" {
-  description = ""
+  description = "table"
   default = "terraform-lock"
 
 }
