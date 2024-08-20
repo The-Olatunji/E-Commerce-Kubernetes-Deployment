@@ -1,7 +1,7 @@
 
 # Create the S3 bucket for storing Terraform state
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = tophe-terraform-statefile
+  bucket = "tophe-terraform-statefile"
   lifecycle {
     prevent_destroy = true
   }
