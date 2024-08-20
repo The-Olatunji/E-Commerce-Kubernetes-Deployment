@@ -126,9 +126,9 @@ provider "kubernetes" {
 
 
 // access managed cluster with kubectl
-resource "null_resource" "update_kubeconfig" {
-  provisioner "local-exec" {
-   # command = "aws eks --region ${data.terraform_remote_state.eks.outputs.region} update-kubeconfig --name ${data.terraform_remote_state.eks.outputs.cluster_name}"
-  command = "aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)"
-  }
-}
+# resource "null_resource" "update_kubeconfig" {
+#   provisioner "local-exec" {
+#    # command = "aws eks --region ${data.terraform_remote_state.eks.outputs.region} update-kubeconfig --name ${data.terraform_remote_state.eks.outputs.cluster_name}"
+#   command = "aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)"
+#   }
+# }
