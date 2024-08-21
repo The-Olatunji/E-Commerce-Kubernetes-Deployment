@@ -30,6 +30,11 @@ While you could use the built-in AWS provisioning processes (UI, CLI, CloudForma
 * [awscli](http://docs.aws.amazon.com/cli/latest/userguide/installing.html)
 * [kubectl v1.24.0 or newer](https://kubernetes.io/docs/tasks/tools/)
 
+## Proposed Deployment Architecture
+
+![Deployment Architecture](<./images/real 3 tier architeture pic.png>)
+
+
 ### Terraform Configuration
 This Terraform configuration includes several modules and providers to deploy the EKS cluster and its associated resources.
 
@@ -176,8 +181,7 @@ terraform {
     bucket = var.bucket_name
     key = var.bucket_key
     region = var.region
-    dynamodb_table = var.db_table
-    encrypt        = true
+    encrypt = true
   }
 }
 ```
@@ -374,15 +378,27 @@ This repository also contains a CI/CD pipeline powered by GitHub Actions. The pi
 
 The CI/CD pipeline is defined in the ci-cd-pipeline.yml file under the .github/workflows directory. The workflow includes the following steps:
 
-Checkout Code: Retrieves the latest code from the repository.
+### Checkout Code: Retrieves the latest code from the repository.
 1. Install Kubectl
+  ![kubectl job](<./images/Screenshot 2024-08-21 023114.png>)
+
 1. Set Up AWS Credentials: Configures AWS credentials using GitHub Secrets.
+
 1. Install Terraform: Installs the specified version of Terraform.
+
 1. Terraform Init: Initializes Terraform and sets up the backend configuration.
+    ![Init](<./images/Screenshot 2024-08-21 023441.png>)
 1. Terraform Plan: Generates an execution plan for the Terraform configuration.
+
 1. Terraform Apply: Applies the Terraform plan to create or update infrastructure.
+
 1. Configure kubectl: Sets up kubectl to interact with the EKS cluster using the provided Kubeconfig.
+    ![Worker nodes](<./images/Screenshot 2024-08-21 023946.png>)
+
 1. Deploy Microservice Application: Deploys the kubernetes component that makes up the whole Microservice application
+
+      ![ microservices deployment](<./images/Screenshot 2024-08-21 024228.png>)
+
 
 ### Environment Variables
 The following environment variables are required:
@@ -405,8 +421,25 @@ AWS_SECRET_ACCESS_KEY
 The KUBE_CONFIG_DATA secret is required for configuring kubectl in the pipeline. Follow these steps to generate and store the Kubeconfig:
 
 
-## Running the Pipeline
+### Running the Pipeline
 Once the pipeline is configured, it will automatically trigger on pushes to the master branch. 
+
+## The 'Destroy' Workflow
+After deployment of the sock shop microservices through this well constructed pipeline, resources are been created on the AWS account which warrant a need to delete and cleanup resources after use. 
+
+To solve this, I have created a new workflow called 'destroy.yaml' which cleans up which the aid of using the backend which in this case is S3 which stores the terraform statefile and can there compare the state of the configuration with the actual resource that exist in AWS account. 
+
+### This pipeline follow quite a simple workflow
+Starting a New Workflow:
+
+The first step is to initialize Terraform using terraform init.
+During initialization, Terraform connects to the S3 backend and downloads the existing state file. This gives Terraform a full understanding of what resources have been created, even if they were created in a different workflow.
+#### Running terraform destroy:
+
+Now, when terraform destroy is ran, Terraform compares the state file (downloaded from S3) with the current state of your infrastructure and identifies which resources it needs to destroy.
+Since the state file reflects the resources managed by Terraform, it knows exactly what to delete.
+
+  ![Destroy resource](<./images/Screenshot 2024-08-21 022916.png>)
 
 ## License
 This project is licensed under the MIT License. 
