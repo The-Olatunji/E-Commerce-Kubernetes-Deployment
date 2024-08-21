@@ -68,5 +68,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: kubectl with AWS credentials
+        run: kubectl get nodes
+
       - name: Deploy Application' to Kubernetes
         run: kubectl apply -f kubernetes/complete-demo.yaml
